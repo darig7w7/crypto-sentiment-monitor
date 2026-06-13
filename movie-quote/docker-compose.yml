@@ -1,0 +1,11 @@
+services:
+  web:
+    build: .
+    command: sh -c "python manage.py migrate --noinput && python manage.py loaddata fixtures/sample_quotes.json && python manage.py runserver 0.0.0.0:8000"
+    environment:
+      DJANGO_SETTINGS_MODULE: config.dev-settings
+      PYTHONUNBUFFERED: "1"
+    ports:
+      - "${HOST_PORT:-8001}:8000"
+    volumes:
+      - .:/app

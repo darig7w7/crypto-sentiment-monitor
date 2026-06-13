@@ -1,0 +1,18 @@
+[2026-06-13T09:20:13.994+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2026-06-13T09:20:14.001+0000] {taskinstance.py:2614} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: movie_quote_notifier_example.fetch_tmdb_metadata scheduled__2026-06-13T08:00:00+00:00 [queued]>
+[2026-06-13T09:20:14.004+0000] {taskinstance.py:2614} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: movie_quote_notifier_example.fetch_tmdb_metadata scheduled__2026-06-13T08:00:00+00:00 [queued]>
+[2026-06-13T09:20:14.005+0000] {taskinstance.py:2867} INFO - Starting attempt 1 of 1
+[2026-06-13T09:20:14.008+0000] {taskinstance.py:2890} INFO - Executing <Task(_PythonDecoratedOperator): fetch_tmdb_metadata> on 2026-06-13 08:00:00+00:00
+[2026-06-13T09:20:14.012+0000] {standard_task_runner.py:104} INFO - Running: ['***', 'tasks', 'run', 'movie_quote_notifier_example', 'fetch_tmdb_metadata', 'scheduled__2026-06-13T08:00:00+00:00', '--job-id', '37', '--raw', '--subdir', 'DAGS_FOLDER/movie_quote_notifier_example.py', '--cfg-path', '/tmp/tmprtdtg76s']
+[2026-06-13T09:20:14.013+0000] {logging_mixin.py:190} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:70 DeprecationWarning: This process (pid=860) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2026-06-13T09:20:14.013+0000] {standard_task_runner.py:105} INFO - Job 37: Subtask fetch_tmdb_metadata
+[2026-06-13T09:20:14.013+0000] {standard_task_runner.py:72} INFO - Started process 861 to run task
+[2026-06-13T09:20:14.030+0000] {task_command.py:467} INFO - Running <TaskInstance: movie_quote_notifier_example.fetch_tmdb_metadata scheduled__2026-06-13T08:00:00+00:00 [running]> on host dd1674c4a419
+[2026-06-13T09:20:14.061+0000] {taskinstance.py:3134} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='movie_quote_notifier_example' AIRFLOW_CTX_TASK_ID='fetch_tmdb_metadata' AIRFLOW_CTX_EXECUTION_DATE='2026-06-13T08:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2026-06-13T08:00:00+00:00'
+[2026-06-13T09:20:14.061+0000] {taskinstance.py:732} INFO - ::endgroup::
+[2026-06-13T09:20:15.274+0000] {python.py:240} INFO - Done. Returned value was: {'movie_query': 'The Social Network', 'match_found': True, 'movie': {'tmdb_id': 37799, 'title': 'The Social Network', 'year': '2010', 'genres': ['Drama'], 'rating': 7.4, 'overview': 'In 2003, Harvard undergrad and computer programmer Mark Zuckerberg begins work on a new concept that eventually turns into the global social network known as Facebook. Six years later, Mark is one of the youngest billionaires ever, but his unprecedented success leads to both personal and legal complications when he ends up on the receiving end of two lawsuits, one involving his former friend.', 'poster_url': 'https://image.tmdb.org/t/p/w500/n0ybibhJtQ5icDqTp8eRytcIHJx.jpg'}, 'character': 'Mark Zuckerberg', 'actor': 'Jesse Eisenberg'}
+[2026-06-13T09:20:15.291+0000] {taskinstance.py:341} INFO - ::group::Post task execution logs
+[2026-06-13T09:20:15.291+0000] {taskinstance.py:353} INFO - Marking task as SUCCESS. dag_id=movie_quote_notifier_example, task_id=fetch_tmdb_metadata, run_id=scheduled__2026-06-13T08:00:00+00:00, execution_date=20260613T080000, start_date=20260613T092014, end_date=20260613T092015
+[2026-06-13T09:20:15.316+0000] {local_task_job_runner.py:266} INFO - Task exited with return code 0
+[2026-06-13T09:20:15.328+0000] {taskinstance.py:3901} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2026-06-13T09:20:15.329+0000] {local_task_job_runner.py:245} INFO - ::endgroup::

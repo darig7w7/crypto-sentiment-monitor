@@ -1,0 +1,48 @@
+# Secrets and local environment
+.env
+**/.env
+!.env.example
+!**/.env.example
+
+# Python
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+.python-version
+.venv/
+venv/
+env/
+
+# Django/runtime databases
+*.sqlite3
+db.sqlite3
+
+# Airflow generated files
+airflow/logs/*
+!airflow/logs/.gitkeep
+airflow/notifications/*
+!airflow/notifications/.gitkeep
+
+# Test/cache/coverage output
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Editor and OS files
+.DS_Store
+.vscode/
+*.code-workspace
+
+# Logs and temporary files
+*.log
+log*
+tmp/
+temp/
+
+# Docker/runtime artifacts
+*.pid
+*.seed
+

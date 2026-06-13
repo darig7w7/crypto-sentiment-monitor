@@ -1,0 +1,37 @@
+[2026-06-13T10:18:06.433+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2026-06-13T10:18:06.444+0000] {taskinstance.py:2614} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: movie_quote_notifier_example.notification_preview scheduled__2026-06-13T09:00:00+00:00 [queued]>
+[2026-06-13T10:18:06.449+0000] {taskinstance.py:2614} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: movie_quote_notifier_example.notification_preview scheduled__2026-06-13T09:00:00+00:00 [queued]>
+[2026-06-13T10:18:06.449+0000] {taskinstance.py:2867} INFO - Starting attempt 1 of 1
+[2026-06-13T10:18:06.453+0000] {taskinstance.py:2890} INFO - Executing <Task(_PythonDecoratedOperator): notification_preview> on 2026-06-13 09:00:00+00:00
+[2026-06-13T10:18:06.457+0000] {standard_task_runner.py:104} INFO - Running: ['***', 'tasks', 'run', 'movie_quote_notifier_example', 'notification_preview', 'scheduled__2026-06-13T09:00:00+00:00', '--job-id', '43', '--raw', '--subdir', 'DAGS_FOLDER/movie_quote_notifier_example.py', '--cfg-path', '/tmp/tmpgv9w160v']
+[2026-06-13T10:18:06.458+0000] {standard_task_runner.py:105} INFO - Job 43: Subtask notification_preview
+[2026-06-13T10:18:06.458+0000] {logging_mixin.py:190} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:70 DeprecationWarning: This process (pid=902) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2026-06-13T10:18:06.459+0000] {standard_task_runner.py:72} INFO - Started process 903 to run task
+[2026-06-13T10:18:06.485+0000] {task_command.py:467} INFO - Running <TaskInstance: movie_quote_notifier_example.notification_preview scheduled__2026-06-13T09:00:00+00:00 [running]> on host dd1674c4a419
+[2026-06-13T10:18:06.529+0000] {taskinstance.py:3134} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='movie_quote_notifier_example' AIRFLOW_CTX_TASK_ID='notification_preview' AIRFLOW_CTX_EXECUTION_DATE='2026-06-13T09:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2026-06-13T09:00:00+00:00'
+[2026-06-13T10:18:06.530+0000] {taskinstance.py:732} INFO - ::endgroup::
+[2026-06-13T10:18:07.203+0000] {logging_mixin.py:190} INFO - Quote of the hour
+
+Titanic (1943)
+Rating: 6.1
+
+"I'm the king of the world!"
+- Jack Dawson (Theodor Loos)
+
+Poster: https://image.tmdb.org/t/p/w500/Al7oIXQ4dZAofBTZWm6OiXS3MEa.jpg
+[2026-06-13T10:18:07.204+0000] {logging_mixin.py:190} INFO - 
+macOS notification payload: /opt/***/notifications/latest_notification.json
+[2026-06-13T10:18:07.208+0000] {python.py:240} INFO - Done. Returned value was: Quote of the hour
+
+Titanic (1943)
+Rating: 6.1
+
+"I'm the king of the world!"
+- Jack Dawson (Theodor Loos)
+
+Poster: https://image.tmdb.org/t/p/w500/Al7oIXQ4dZAofBTZWm6OiXS3MEa.jpg
+[2026-06-13T10:18:07.227+0000] {taskinstance.py:341} INFO - ::group::Post task execution logs
+[2026-06-13T10:18:07.228+0000] {taskinstance.py:353} INFO - Marking task as SUCCESS. dag_id=movie_quote_notifier_example, task_id=notification_preview, run_id=scheduled__2026-06-13T09:00:00+00:00, execution_date=20260613T090000, start_date=20260613T101806, end_date=20260613T101807
+[2026-06-13T10:18:07.270+0000] {local_task_job_runner.py:266} INFO - Task exited with return code 0
+[2026-06-13T10:18:07.279+0000] {taskinstance.py:3901} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2026-06-13T10:18:07.280+0000] {local_task_job_runner.py:245} INFO - ::endgroup::

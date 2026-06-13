@@ -1,0 +1,18 @@
+{
+  "quote": "Whatever it takes.",
+  "movie": "Avengers: Endgame",
+  "character": "Steve Rogers",
+  "actor": "Chris Evans",
+  "poster_url": "https://image.tmdb.org/t/p/w500/ulzhLuWrPK07P1YkdWQLZnQh1JL.jpg",
+  "year": "2019",
+  "genres": [
+    "Adventure",
+    "Science Fiction",
+    "Action"
+  ],
+  "rating": 8.237,
+  "overview": "After the devastating events of Avengers: Infinity War, the universe is in ruins due to the efforts of the Mad Titan, Thanos. With the help of remaining allies, the Avengers must assemble once more in order to undo Thanos' actions and restore order to the universe once and for all, no matter what consequences may be in store.",
+  "tmdb_id": 299534,
+  "message": "Quote of the hour\n\nAvengers: Endgame (2019)\nRating: 8.237\n\n\"Whatever it takes.\"\n- Steve Rogers (Chris Evans)\n\nPoster: https://image.tmdb.org/t/p/w500/ulzhLuWrPK07P1YkdWQLZnQh1JL.jpg",
+  "poster_file": "/opt/airflow/notifications/latest_poster.jpg"
+}
