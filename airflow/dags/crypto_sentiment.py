@@ -31,7 +31,7 @@ def get_db_connection():
     dag_id="crypto_sentiment",
     description="Fetch crypto prices, news and HackerNews posts, analyze sentiment.",
     start_date=datetime(2026, 1, 1),
-    schedule="@hourly",
+    schedule="*/15 * * * *",
     catchup=False,
     tags=["crypto", "sentiment", "news"],
 )
