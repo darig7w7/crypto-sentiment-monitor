@@ -3,7 +3,7 @@
 Pipeline de datos que recopila precios de criptomonedas y analiza el sentimiento
 de noticias y publicaciones en tiempo real, correlacionando ambas señales cada hora.
 
-## Hipótesis
+## Introducción
 
 El sentimiento promedio de noticias y publicaciones sobre criptomonedas
 está correlacionado con el movimiento del precio en la siguiente hora.
