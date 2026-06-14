@@ -45,16 +45,20 @@ La API de Reddit rechaza credenciales de cuentas nuevas desde 2023. NewsAPI prov
 
 ## 1. Configurar el entorno
 
+Crear el archivo de variables de entorno:
+
 ```bash
 cp tmdb-movie-metadata/.env.example tmdb-movie-metadata/.env
 ```
 
-Editar `tmdb-movie-metadata/.env` y agregar la clave de NewsAPI:
+Editar `tmdb-movie-metadata/.env` y agregar la clave de NewsAPI al final del archivo:
 
 ```env
 NEWS_API_KEY=tu_clave_aqui
 ```
 
+> Este archivo es cargado por Airflow como fuente de variables de entorno.
+> La carpeta `tmdb-movie-metadata` es parte de la estructura base del laboratorio.
 ## 2. Levantar Airflow
 
 ```bash
