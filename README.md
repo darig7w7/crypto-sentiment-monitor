@@ -26,13 +26,6 @@ dashboard/
 
 API Flask y dashboard HTML que lee de PostgreSQL y visualiza precios, sentimiento en el tiempo, frecuencia de palabras y correlación con movimiento de precios.
 
-```text
-project-idea.md
-project-idea.es.md
-```
-
-Documento de idea del proyecto en inglés y español.
-
 ## Requisitos
 
 - Docker y Docker Compose
@@ -45,20 +38,16 @@ La API de Reddit rechaza credenciales de cuentas nuevas desde 2023. NewsAPI prov
 
 ## 1. Configurar el entorno
 
-Crear el archivo de variables de entorno:
-
 ```bash
-cp tmdb-movie-metadata/.env.example tmdb-movie-metadata/.env
+cp airflow/.env.example airflow/.env
 ```
 
-Editar `tmdb-movie-metadata/.env` y agregar la clave de NewsAPI al final del archivo:
+Editar `airflow/.env` y agregar tu clave de NewsAPI:
 
 ```env
 NEWS_API_KEY=tu_clave_aqui
 ```
 
-> Este archivo es cargado por Airflow como fuente de variables de entorno.
-> La carpeta `tmdb-movie-metadata` es parte de la estructura base del laboratorio.
 ## 2. Levantar Airflow
 
 ```bash
