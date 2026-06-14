@@ -1,5 +1,7 @@
 # Crypto Sentiment Pipeline
 
+![Arquitectura](docs/crypto.png)
+
 Proyecto de Ingeniería de Datos (Proyecto 8) que combina precios de criptomonedas con análisis de sentimiento de noticias y posts tecnológicos, usando Docker, Airflow, CoinGecko, NewsAPI, Hacker News, VADER y PostgreSQL.
 
 El pipeline extrae datos de tres fuentes cada 15 minutos y los correlaciona:
