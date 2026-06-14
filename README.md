@@ -279,3 +279,9 @@ y sin restricciones. La comunidad de HackerNews produce contenido más
 analítico sobre cripto que Reddit, lo que mejora la calidad del
 análisis de sentimiento con VADER, un modelo calibrado para texto
 técnico e informativo más que para lenguaje emocional o de jerga.
+
+
+## Preguntas de Negocio
+¿Qué discusiones ocurren antes de los incrementos de precio?
+¿Qué palabras aparecen con mayor frecuencia?
+¿Existe una correlación entre el sentimiento y el movimiento de precios?
