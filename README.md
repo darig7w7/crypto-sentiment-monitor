@@ -282,6 +282,6 @@ técnico e informativo más que para lenguaje emocional o de jerga.
 
 
 ## Preguntas de Negocio
-¿Qué discusiones ocurren antes de los incrementos de precio?
-¿Qué palabras aparecen con mayor frecuencia?
-¿Existe una correlación entre el sentimiento y el movimiento de precios?
+- ¿Qué discusiones ocurren antes de los incrementos de precio?
+- ¿Qué palabras aparecen con mayor frecuencia?
+- ¿Existe una correlación entre el sentimiento y el movimiento de precios?
