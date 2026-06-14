@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Sentiment Monitor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg:        #080c14;
+            --surface:   #0d1524;
+            --border:    #1a2540;
+            --muted:     #3a4a6a;
+            --text:      #c8d4e8;
+            --text-dim:  #5a6a8a;
+            --accent:    #3b82f6;
+            --green:     #22c55e;
+            --red:       #ef4444;
+            --amber:     #f59e0b;
+            --mono:      'JetBrains Mono', monospace;
+            --sans:      'Inter', sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--sans);
+            font-size: 14px;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* HEADER */
+        header {
+            border-bottom: 1px solid var(--border);
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 56px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .logo-mark {
+            width: 28px;
+            height: 28px;
+            border: 1.5px solid var(--accent);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo-mark svg { width: 14px; height: 14px; stroke: var(--accent); fill: none; stroke-width: 2; }
+        .logo-name {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text);
+        }
+        .logo-sub {
+            font-size: 11px;
+            color: var(--text-dim);
+            letter-spacing: 0.04em;
+        }
+        .header-right {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+        .live-dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--green);
+            margin-right: 6px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* LAYOUT */
+        .page { max-width: 1280px; margin: 0 auto; padding: 32px 40px; }
+
+        /* SECTION LABEL */
+        .section-label {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* METRIC GRID */
+        .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 32px; }
+        .metric {
+            background: var(--surface);
+            padding: 24px;
+        }
+        .metric-label {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-bottom: 12px;
+        }
+        .metric-value {
+            font-family: var(--mono);
+            font-size: 28px;
+            font-weight: 500;
+            color: var(--text);
+            line-height: 1;
+        }
+        .metric-sub {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-top: 8px;
+        }
+        .up { color: var(--green); }
+        .down { color: var(--red); }
+        .neutral-color { color: var(--amber); }
+
+        /* CHARTS */
+        .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
+        .chart-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 24px;
+        }
+        .chart-card.wide { grid-column: span 2; }
+        .chart-title {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-dim);
+            letter-spacing: 0.04em;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        /* TABLE */
+        .table-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .table-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-dim);
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        th {
+            text-align: left;
+            padding: 10px 24px;
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            border-bottom: 1px solid var(--border);
+            background: var(--bg);
+        }
+        td {
+            padding: 12px 24px;
+            font-size: 13px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text);
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: rgba(59,130,246,0.04); }
+
+        .score {
+            font-family: var(--mono);
+            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .score.up { background: rgba(34,197,94,0.1); color: var(--green); }
+        .score.down { background: rgba(239,68,68,0.1); color: var(--red); }
+        .score.neutral-color { background: rgba(245,158,11,0.1); color: var(--amber); }
+
+        .tag {
+            font-family: var(--mono);
+            font-size: 10px;
+            padding: 2px 7px;
+            border-radius: 3px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+        .tag.news { background: rgba(59,130,246,0.1); color: var(--accent); }
+        .tag.hackernews { background: rgba(245,158,11,0.1); color: var(--amber); }
+
+        .source-name { color: var(--text-dim); font-size: 12px; }
+        .title-text { max-width: 600px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <div class="logo-mark">
+            <svg viewBox="0 0 14 14"><polyline points="1,10 4,5 7,8 10,3 13,6"/></svg>
+        </div>
+        <div>
+            <div class="logo-name">Sentiment Monitor</div>
+            <div class="logo-sub">Bitcoin · Ethereum · Análisis de texto</div>
+        </div>
+    </div>
+    <div class="header-right">
+        <span class="live-dot"></span>actualizado cada hora
+    </div>
+</header>
+
+<div class="page">
+
+    <div class="section-label">Métricas del último run</div>
+    <div class="metrics">
+        <div class="metric">
+            <div class="metric-label">Bitcoin / USD</div>
+            <div class="metric-value" id="btc-price">—</div>
+            <div class="metric-sub" id="btc-change">—</div>
+        </div>
+        <div class="metric">
+            <div class="metric-label">Ethereum / USD</div>
+            <div class="metric-value" id="eth-price">—</div>
+            <div class="metric-sub" id="eth-change">—</div>
+        </div>
+        <div class="metric">
+            <div class="metric-label">Sentimiento promedio</div>
+            <div class="metric-value" id="sentiment-value">—</div>
+            <div class="metric-sub" id="sentiment-label">—</div>
+        </div>
+        <div class="metric">
+            <div class="metric-label">Artículos procesados</div>
+            <div class="metric-value" id="total-analyzed">—</div>
+            <div class="metric-sub">NewsAPI + HackerNews</div>
+        </div>
+    </div>
+
+    <div class="section-label">Series de tiempo</div>
+    <div class="charts-grid">
+        <div class="chart-card">
+            <div class="chart-title">Precio Bitcoin</div>
+            <canvas id="btcChart"></canvas>
+        </div>
+        <div class="chart-card">
+            <div class="chart-title">Sentimiento promedio</div>
+            <canvas id="sentimentChart"></canvas>
+        </div>
+        <div class="chart-card wide">
+            <div class="chart-title">Correlación — Precio BTC vs Sentimiento</div>
+            <canvas id="correlationChart"></canvas>
+        </div>
+    </div>
+
+    <div class="section-label">Artículos analizados</div>
+    <div class="table-card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Fuente</th>
+                    <th>Título</th>
+                    <th>Score</th>
+                    <th>Tipo</th>
+                </tr>
+            </thead>
+            <tbody id="items-table"></tbody>
+        </table>
+    </div>
+
+</div>
+
+<script>
+const API = "http://127.0.0.1:5000/api";
+
+const chartDefaults = {
+    plugins: { legend: { labels: { color: "#5a6a8a", font: { family: "JetBrains Mono", size: 11 } } } },
+    scales: {
+        x: { ticks: { color: "#5a6a8a", font: { family: "JetBrains Mono", size: 10 } }, grid: { color: "#1a2540" } },
+        y: { ticks: { color: "#5a6a8a", font: { family: "JetBrains Mono", size: 10 } }, grid: { color: "#1a2540" } }
+    }
+};
+
+async function loadDashboard() {
+    const [prices, sentiment, correlation, items] = await Promise.all([
+        fetch(`${API}/prices`).then(r => r.json()),
+        fetch(`${API}/sentiment`).then(r => r.json()),
+        fetch(`${API}/correlation`).then(r => r.json()),
+        fetch(`${API}/items`).then(r => r.json()),
+    ]);
+
+    const btc = prices.find(p => p.coin === "bitcoin");
+    const eth = prices.find(p => p.coin === "ethereum");
+    const last = sentiment[0];
+
+    document.getElementById("btc-price").textContent = `$${btc.price_usd.toLocaleString()}`;
+    const btcChangeEl = document.getElementById("btc-change");
+    btcChangeEl.textContent = `${btc.change_24h >= 0 ? "+" : ""}${btc.change_24h.toFixed(2)}% en 24h`;
+    btcChangeEl.className = `metric-sub ${btc.change_24h >= 0 ? "up" : "down"}`;
+
+    document.getElementById("eth-price").textContent = `$${eth.price_usd.toLocaleString()}`;
+    const ethChangeEl = document.getElementById("eth-change");
+    ethChangeEl.textContent = `${eth.change_24h >= 0 ? "+" : ""}${eth.change_24h.toFixed(2)}% en 24h`;
+    ethChangeEl.className = `metric-sub ${eth.change_24h >= 0 ? "up" : "down"}`;
+
+    const sentEl = document.getElementById("sentiment-value");
+    sentEl.textContent = last.average_sentiment.toFixed(4);
+    const cls = last.label === "positive" ? "up" : last.label === "negative" ? "down" : "neutral-color";
+    sentEl.className = `metric-value ${cls}`;
+    document.getElementById("sentiment-label").textContent = last.label;
+    document.getElementById("total-analyzed").textContent = last.total_analyzed;
+
+    const btcPrices = prices.filter(p => p.coin === "bitcoin").reverse();
+    new Chart(document.getElementById("btcChart"), {
+        type: "line",
+        data: {
+            labels: btcPrices.map(p => p.fetched_at.slice(11, 16)),
+            datasets: [{
+                label: "BTC USD",
+                data: btcPrices.map(p => p.price_usd),
+                borderColor: "#3b82f6",
+                backgroundColor: "rgba(59,130,246,0.06)",
+                fill: true,
+                tension: 0.4,
+                pointRadius: 3,
+                pointBackgroundColor: "#3b82f6",
+            }]
+        },
+        options: chartDefaults
+    });
+
+    const sentReversed = [...sentiment].reverse();
+    new Chart(document.getElementById("sentimentChart"), {
+        type: "line",
+        data: {
+            labels: sentReversed.map(s => s.fetched_at.slice(11, 16)),
+            datasets: [{
+                label: "Sentimiento",
+                data: sentReversed.map(s => s.average_sentiment),
+                borderColor: "#22c55e",
+                backgroundColor: "rgba(34,197,94,0.06)",
+                fill: true,
+                tension: 0.4,
+                pointRadius: 3,
+                pointBackgroundColor: "#22c55e",
+            }]
+        },
+        options: { ...chartDefaults, scales: { ...chartDefaults.scales, y: { ...chartDefaults.scales.y, min: -1, max: 1 } } }
+    });
+
+    const btcCorr = correlation.filter(c => c.coin === "bitcoin");
+    new Chart(document.getElementById("correlationChart"), {
+        type: "line",
+        data: {
+            labels: btcCorr.map(c => c.fetched_at.slice(11, 16)),
+            datasets: [
+                {
+                    label: "Precio BTC",
+                    data: btcCorr.map(c => c.price_usd),
+                    borderColor: "#3b82f6",
+                    tension: 0.4,
+                    pointRadius: 3,
+                    pointBackgroundColor: "#3b82f6",
+                    yAxisID: "y",
+                },
+                {
+                    label: "Sentimiento",
+                    data: btcCorr.map(c => c.average_sentiment),
+                    borderColor: "#22c55e",
+                    tension: 0.4,
+                    pointRadius: 3,
+                    pointBackgroundColor: "#22c55e",
+                    yAxisID: "y1",
+                }
+            ]
+        },
+        options: {
+            plugins: chartDefaults.plugins,
+            scales: {
+                x: chartDefaults.scales.x,
+                y: { ...chartDefaults.scales.y, position: "left" },
+                y1: { ...chartDefaults.scales.y, position: "right", min: -1, max: 1, grid: { drawOnChartArea: false } }
+            }
+        }
+    });
+
+    const tbody = document.getElementById("items-table");
+    items.forEach(item => {
+        const scoreClass = item.compound > 0.05 ? "up" : item.compound < -0.05 ? "down" : "neutral-color";
+        tbody.innerHTML += `
+            <tr>
+                <td class="source-name">${item.source}</td>
+                <td class="title-text">${item.title}</td>
+                <td><span class="score ${scoreClass}">${item.compound >= 0 ? "+" : ""}${item.compound.toFixed(3)}</span></td>
+                <td><span class="tag ${item.type}">${item.type}</span></td>
+            </tr>
+        `;
+    });
+}
+
+loadDashboard();
+</script>
+</body>
+</html>

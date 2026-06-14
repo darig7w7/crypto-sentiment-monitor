@@ -1,251 +1,266 @@
-# Movie Quote Notifier
+# Crypto Sentiment Monitor
 
-Data Engineering lab project using Docker, Airflow, a local movie quotes API, TMDB metadata, PostgreSQL, and macOS notifications.
+Pipeline de datos que recopila precios de criptomonedas y analiza el sentimiento
+de noticias y publicaciones en tiempo real, correlacionando ambas señales cada hora.
 
-The project combines two data sources:
+## Hipótesis
 
-```text
-movie-quote API ───────> quote + movie + character ──┐
-                                                      ├──> Airflow DAG ──> merged payload ──> notification files
-TMDB API ──────────────> poster + year + genre + rating + overview + actor ─┘
-```
+El sentimiento promedio de noticias y publicaciones sobre criptomonedas
+está correlacionado con el movimiento del precio en la siguiente hora.
+Si el mercado reacciona a la narrativa mediática, debería existir una
+correlación positiva entre un sentimiento alto y una subida de precio,
+y viceversa. Este pipeline permite observar esa relación con datos reales.
 
-## Folders
+## Arquitectura
+CoinGecko API ──────────────────────────────────┐
 
-```text
-movie-quote/
-```
+▼
 
-Local Django REST API that returns movie quotes. It includes Docker Compose and sample quote data.
+NewsAPI ──────── filtro cripto ──── VADER ──── PostgreSQL ──── Flask API ──── Dashboard
 
-```text
-tmdb-movie-metadata/
-```
+▲
 
-Standalone TMDB lookup tool. Given a movie name, it returns the movie poster, year, genres, rating, overview, and actor when a character is provided.
+HackerNews ──────────────────────────────────────┘
 
-```text
-airflow/
-```
+Orquestado con Apache Airflow. Cada hora el DAG `crypto_sentiment` ejecuta
+las tres extracciones en paralelo, analiza el sentimiento y persiste los resultados.
 
-Airflow environment with a DAG that fetches a quote, fetches TMDB metadata, merges both payloads, and writes notification files.
+## Conceptos clave
 
-```text
-project-idea.md
-project-idea.es.md
-```
+### ¿Qué es un pipeline ETL?
 
-Project idea document in English and Spanish.
+ETL significa Extract, Transform, Load. Es el patrón base de ingeniería de datos:
 
-## Requirements
+- **Extract** — obtener datos crudos de fuentes externas (APIs, bases de datos, archivos)
+- **Transform** — limpiar, filtrar y procesar esos datos para que sean útiles
+- **Load** — persistir el resultado en un almacén de datos para análisis posterior
 
-- Docker / Docker Compose
-- TMDB API read access token or API key
-- macOS, if you want local notifications
-- Optional: `terminal-notifier` for richer macOS notifications
+En este proyecto cada fase tiene una responsabilidad clara:
+
+| Fase | Tasks |
+|---|---|
+| Extract | `fetch_prices`, `fetch_news`, `fetch_hackernews` |
+| Transform | `analyze_sentiment` |
+| Load | `save_to_postgres` |
+
+### ¿Qué es Apache Airflow?
+
+Airflow es un orquestador de pipelines de datos. Su función es decidir cuándo
+correr cada tarea, en qué orden, con qué dependencias, y qué hacer si algo falla.
+
+Sin Airflow, un script Python que llama APIs tiene varios problemas:
+- No se ejecuta solo cada hora
+- Si una API falla, todo el proceso se pierde
+- No hay visibilidad de qué corrió bien y qué no
+
+Airflow resuelve los tres con reintentos automáticos, scheduling y una
+interfaz web para monitorear cada ejecución.
+
+### ¿Qué es un DAG?
+
+DAG significa Directed Acyclic Graph — grafo dirigido acíclico. En Airflow
+cada pipeline se define como un DAG: un archivo Python que describe las tareas
+y sus dependencias. "Acíclico" significa que no hay ciclos — las tareas solo
+avanzan, nunca vuelven atrás.
+
+Las dependencias permiten paralelismo. En este DAG las tres extracciones
+no dependen entre sí, por lo que Airflow las corre simultáneamente:
+
+fetch_prices ─────────────────────────┐
+
+▼
+
+fetch_news ──── analyze_sentiment ──── save_to_postgres
+
+▲
+
+fetch_hackernews ─────────────────────┘
+
+Esto reduce el tiempo total de ejecución de ~18 segundos a ~6 segundos.
+
+### ¿Qué es VADER?
+
+VADER (Valence Aware Dictionary and sEntiment Reasoner) es un modelo de
+análisis de sentimiento diseñado específicamente para texto de internet.
+A diferencia de modelos de machine learning que requieren entrenamiento,
+VADER usa un diccionario de palabras con pesos predefinidos.
+
+El resultado principal es el score `compound`, un valor entre -1 y +1:
+
+| Rango | Interpretación |
+|---|---|
+| > 0.05 | Positivo |
+| -0.05 a 0.05 | Neutral |
+| < -0.05 | Negativo |
+
+VADER funciona bien con titulares de noticias porque está calibrado para
+texto corto, informal y con carga emocional.
+
+### ¿Por qué filtrar las noticias?
+
+NewsAPI devuelve artículos de fuentes como Crypto Briefing que mezclan
+contenido cripto con noticias generales. Sin filtro, titulares del Mundial
+o de política contaminan el análisis de sentimiento. El filtro verifica
+que cada artículo contenga al menos una keyword del dominio cripto
+antes de incluirlo en el análisis.
+
+## Tecnologías
+
+| Capa | Tecnología |
+|---|---|
+| Orquestación | Apache Airflow 2.10 |
+| Análisis de sentimiento | VADER (vaderSentiment) |
+| Base de datos | PostgreSQL 16 |
+| Backend | Flask 3.1 |
+| Infraestructura | Docker + Docker Compose |
+
+## Fuentes de datos
+
+- **CoinGecko** — precios y variación 24h de Bitcoin y Ethereum (sin API key)
+- **NewsAPI** — artículos de medios especializados filtrados por keywords cripto
+- **HackerNews** — posts de la comunidad tech vía Algolia API (sin API key)
+
+## Requisitos
+
+- Docker y Docker Compose
+- Python 3.10+
+- API key de NewsAPI (gratuita en newsapi.org)
+
+## Instalación
+
+### 1. Clonar el repositorio
 
 ```bash
-brew install terminal-notifier
+git clone <url-del-repo>
+cd data_engineering_course_lab4
 ```
 
-## 1. Start the Movie Quote API
+### 2. Configurar variables de entorno
 
 ```bash
-cd movie-quote
-docker-compose up --build -d
+cp tmdb-movie-metadata/.env.example tmdb-movie-metadata/.env
 ```
 
-The API runs at:
+Editar `airflow/docker-compose.yml` y reemplazar la NEWS_API_KEY:
 
-```text
-http://127.0.0.1:8001
+```yaml
+NEWS_API_KEY: ${NEWS_API_KEY:-tu_key_aqui}
 ```
 
-Useful endpoints:
-
-```text
-http://127.0.0.1:8001/v1/quote/
-http://127.0.0.1:8001/v1/shows/
-http://127.0.0.1:8001/v1/shows/top-gun-maverick/
-```
-
-## 2. Configure TMDB
-
-```bash
-cd ../tmdb-movie-metadata
-cp .env.example .env
-```
-
-Edit `.env` and add your real credential:
-
-```env
-TMDB_READ_ACCESS_TOKEN=your_real_token
-```
-
-You can test the TMDB tool with Docker:
-
-```bash
-docker-compose run --rm tmdb "The Dark Knight" --character "The Joker"
-```
-
-Expected output shape:
-
-```json
-{
-  "movie_query": "The Dark Knight",
-  "match_found": true,
-  "movie": {
-    "title": "The Dark Knight",
-    "year": "2008",
-    "genres": ["Action", "Crime", "Thriller"],
-    "rating": 8.5,
-    "overview": "...",
-    "poster_url": "https://image.tmdb.org/t/p/w500/..."
-  },
-  "character": "The Joker",
-  "actor": "Heath Ledger"
-}
-```
-
-## 3. Start Airflow
-
-```bash
-cd ../airflow
-cp .env.example .env
-docker-compose up airflow-init
-docker-compose up -d
-```
-
-Open Airflow:
-
-```text
-http://127.0.0.1:8081
-```
-
-Login:
-
-```text
-admin / admin
-```
-
-The example DAG is:
-
-```text
-movie_quote_notifier_example
-```
-
-## 4. Run the DAG
-
-In the Airflow UI:
-
-1. Open `movie_quote_notifier_example`
-2. Unpause the DAG
-3. Trigger it manually
-4. Check task logs
-
-Task flow:
-
-```text
-fetch_quote
-  -> fetch_tmdb_metadata
-  -> merge_quote_and_movie
-  -> notification_preview
-```
-
-The final merged payload is printed in the `merge_quote_and_movie` task logs.
-
-The notification payload is written to:
-
-```text
-airflow/notifications/latest_notification.json
-airflow/notifications/latest_poster.jpg
-```
-
-## 5. Show macOS Notifications
-
-To show the latest notification once:
+### 3. Levantar Airflow
 
 ```bash
 cd airflow
-./scripts/show_latest_notification.sh
+sudo chown -R 50000:0 logs/
+docker compose up -d
 ```
 
-To keep a watcher running forever:
+El webserver estará disponible en el puerto `8081` (no 8080).
+Airflow tarda 2-3 minutos en iniciar completamente.
+
+Usuario: `admin` / Contraseña: `admin`
+
+### 4. Crear las tablas en PostgreSQL
 
 ```bash
-./scripts/watch_notifications.sh
+docker exec -it airflow-postgres-1 psql -U airflow -d airflow
 ```
 
-Leave that terminal open. Every time Airflow writes a new notification payload, the watcher shows it on your Mac.
+```sql
+CREATE TABLE crypto_prices (
+    id SERIAL PRIMARY KEY,
+    fetched_at TIMESTAMP,
+    coin VARCHAR(20),
+    price_usd NUMERIC,
+    change_24h NUMERIC
+);
 
-Clicking the notification opens the downloaded poster image.
+CREATE TABLE crypto_sentiment (
+    id SERIAL PRIMARY KEY,
+    fetched_at TIMESTAMP,
+    average_sentiment NUMERIC,
+    label VARCHAR(20),
+    total_analyzed INTEGER
+);
 
-## How Data Moves Between Airflow Tasks
-
-The DAG uses Airflow TaskFlow API.
-
-```python
-quote = fetch_quote()
-tmdb = fetch_tmdb_metadata(quote)
-merged = merge_quote_and_movie(quote, tmdb)
-notification_preview(merged)
+CREATE TABLE sentiment_items (
+    id SERIAL PRIMARY KEY,
+    fetched_at TIMESTAMP,
+    source VARCHAR(100),
+    title TEXT,
+    compound NUMERIC,
+    type VARCHAR(20)
+);
 ```
 
-Each `return` value is stored by Airflow as an XCom. When the next task receives that value as a parameter, Airflow automatically creates the dependency and passes the data.
+### 5. Activar el DAG
 
-Conceptually:
+En la interfaz de Airflow activar `crypto_sentiment` y ejecutarlo manualmente
+con el botón Trigger DAG. A partir de ese momento corre automáticamente cada hora.
 
-```text
-fetch_quote returns quote_payload
-        ↓
-fetch_tmdb_metadata receives quote_payload and returns tmdb_payload
-        ↓
-merge_quote_and_movie receives quote_payload + tmdb_payload and returns merged_payload
-        ↓
-notification_preview receives merged_payload and writes notification files
-```
-
-## Stop Everything
+### 6. Levantar el dashboard
 
 ```bash
-cd airflow
-docker-compose down
+# Si no tienes python3-venv instalado
+sudo apt install python3-venv python3-full -y
 
-cd ../movie-quote
-docker-compose down
+cd dashboard
+python3 -m venv venv
+source venv/bin/activate
+pip install flask flask-cors psycopg2-binary
+python app.py
 ```
 
-The TMDB helper uses one-off containers, so it usually does not need to be stopped.
+Dashboard disponible en `http://127.0.0.1:5000`
 
-## Troubleshooting
+## Estructura del proyecto
 
-If Airflow is not visible on `8081`:
+data_engineering_course_lab4/
 
-```bash
-cd airflow
-docker-compose ps
-docker-compose logs --tail=100 airflow-webserver
+├── airflow/
+
+│   ├── dags/
+
+│   │   └── crypto_sentiment.py   # DAG principal
+
+│   └── docker-compose.yml
+
+└── dashboard/
+
+├── app.py                    # API Flask
+
+└── index.html                # Dashboard
+
+## Esquema de base de datos
+
+crypto_prices          crypto_sentiment       sentiment_items
+
+─────────────          ────────────────       ───────────────
+
+id                     id                     id
+
+fetched_at             fetched_at             fetched_at
+
+coin                   average_sentiment      source
+
+price_usd              label                  title
+
+change_24h             total_analyzed         compound
+
+type
+
+## Consulta de correlación
+
+```sql
+SELECT
+    cs.fetched_at,
+    cs.average_sentiment,
+    cs.label,
+    cp.coin,
+    cp.price_usd,
+    cp.change_24h
+FROM crypto_sentiment cs
+JOIN crypto_prices cp
+    ON DATE_TRUNC('minute', cs.fetched_at) = DATE_TRUNC('minute', cp.fetched_at)
+ORDER BY cs.fetched_at ASC;
 ```
-
-If `movie-quote` does not respond:
-
-```bash
-cd movie-quote
-docker-compose ps
-curl http://127.0.0.1:8001/v1/quote/
-```
-
-If TMDB fails inside Airflow, confirm this file exists and contains your real token:
-
-```text
-tmdb-movie-metadata/.env
-```
-
-Then restart Airflow:
-
-```bash
-cd airflow
-docker-compose up -d --force-recreate airflow-webserver airflow-scheduler
-```
-
-If macOS notifications do not appear, check notification permissions for your terminal app in System Settings.

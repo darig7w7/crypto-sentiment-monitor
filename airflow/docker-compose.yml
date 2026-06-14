@@ -9,11 +9,12 @@ x-airflow-common: &airflow-common
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER:-airflow}:${POSTGRES_PASSWORD:-airflow}@postgres/${POSTGRES_DB:-airflow}
     AIRFLOW__WEBSERVER__SECRET_KEY: local-dev-secret-key
     AIRFLOW__API__AUTH_BACKENDS: airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session
-    _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-requests==2.31.0 psycopg2-binary==2.9.9}
+    _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-requests==2.31.0 psycopg2-binary==2.9.9 vaderSentiment==3.3.2}
     QUOTE_API_URL: ${QUOTE_API_URL:-http://host.docker.internal:8001/v1/quote/}
     QUOTE_API_HOST_HEADER: ${QUOTE_API_HOST_HEADER:-127.0.0.1:8001}
     TMDB_SCRIPT_PATH: ${TMDB_SCRIPT_PATH:-/opt/airflow/sources/tmdb-movie-metadata/scripts/get_movie_metadata.py}
     NOTIFICATION_DIR: ${NOTIFICATION_DIR:-/opt/airflow/notifications}
+    NEWS_API_KEY: ${NEWS_API_KEY:-5636eec822c243c89925aeecd7fbb6b1}
   volumes:
     - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
     - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
@@ -33,6 +34,8 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-airflow}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-airflow}
       POSTGRES_DB: ${POSTGRES_DB:-airflow}
+    ports:
+      - "5432:5432"
     volumes:
       - postgres-db-volume:/var/lib/postgresql/data
     healthcheck:

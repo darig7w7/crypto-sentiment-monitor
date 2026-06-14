@@ -1,3 +1,0 @@
-[2026-06-13T03:41:19.196+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
-[2026-06-13T03:41:19.211+0000] {taskinstance.py:2604} INFO - Dependencies not met for <TaskInstance: movie_quote_notifier_example.fetch_quote manual__2026-06-13T00:00:00+00:00 [success]>, dependency 'Task Instance State' FAILED: Task is in the 'success' state.
-[2026-06-13T03:41:19.217+0000] {local_task_job_runner.py:166} INFO - Task is not able to be run
