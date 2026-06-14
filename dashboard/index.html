@@ -101,6 +101,7 @@
             margin-bottom: 16px;
             padding-bottom: 8px;
             border-bottom: 1px solid var(--border);
+            margin-top: 24px;
         }
 
         /* METRIC GRID */
@@ -134,7 +135,7 @@
         .down { color: var(--red); }
         .neutral-color { color: var(--amber); }
 
-        /* CHARTS */
+        /* CHARTS & ANALYTICS LAYOUT */
         .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
         .chart-card {
             background: var(--surface);
@@ -152,21 +153,37 @@
             text-transform: uppercase;
         }
 
+        /* ANALYTICS: WORDS CLOUD */
+        .words-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px 0;
+        }
+        .word-badge {
+            font-family: var(--mono);
+            font-size: 12px;
+            padding: 4px 10px;
+            background: rgba(26, 37, 64, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .word-badge span {
+            font-size: 10px;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
         /* TABLE */
         .table-card {
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 10px;
             overflow: hidden;
-        }
-        .table-header {
-            padding: 16px 24px;
-            border-bottom: 1px solid var(--border);
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--text-dim);
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
         }
         table { width: 100%; border-collapse: collapse; }
         th {
@@ -228,7 +245,7 @@
         </div>
     </div>
     <div class="header-right">
-        <span class="live-dot"></span>actualizado cada hora
+        <span class="live-dot"></span>actualizado cada 15 min
     </div>
 </header>
 
@@ -258,6 +275,54 @@
         </div>
     </div>
 
+
+
+    <div class="section-label">
+    Business Analytics
+    </div>
+
+    <div class="metrics">
+
+        <div class="metric">
+            <div class="metric-label">
+                BTC Máximo
+            </div>
+            <div class="metric-value" id="btc-max">
+                —
+            </div>
+        </div>
+
+        <div class="metric">
+            <div class="metric-label">
+                BTC Mínimo
+            </div>
+            <div class="metric-value" id="btc-min">
+                —
+            </div>
+        </div>
+
+        <div class="metric">
+            <div class="metric-label">
+                BTC Promedio
+            </div>
+            <div class="metric-value" id="btc-avg">
+                —
+            </div>
+        </div>
+
+        <div class="metric">
+            <div class="metric-label">
+                Fuente más positiva
+            </div>
+            <div class="metric-value" id="best-source">
+                —
+            </div>
+        </div>
+
+    </div>
+
+
+
     <div class="section-label">Series de tiempo</div>
     <div class="charts-grid">
         <div class="chart-card">
@@ -272,6 +337,12 @@
             <div class="chart-title">Correlación — Precio BTC vs Sentimiento</div>
             <canvas id="correlationChart"></canvas>
         </div>
+    </div>
+
+    <div class="section-label">Análisis de Palabras Clave Más Frecuentes (Mín. 5 letras)</div>
+    <div class="chart-card" style="margin-bottom: 32px;">
+        <div class="chart-title">Conceptos de mayor impacto detectados en la ingesta</div>
+        <div id="words-cloud" class="words-container">Cargando tópicos...</div>
     </div>
 
     <div class="section-label">Artículos analizados</div>
@@ -295,6 +366,7 @@
 const API = "http://127.0.0.1:5000/api";
 
 const chartDefaults = {
+    responsive: true,
     plugins: { legend: { labels: { color: "#5a6a8a", font: { family: "JetBrains Mono", size: 11 } } } },
     scales: {
         x: { ticks: { color: "#5a6a8a", font: { family: "JetBrains Mono", size: 10 } }, grid: { color: "#1a2540" } },
@@ -303,35 +375,69 @@ const chartDefaults = {
 };
 
 async function loadDashboard() {
-    const [prices, sentiment, correlation, items] = await Promise.all([
+    // Agregamos fetch de /words para consumirlo en el frontend
+    const [
+        prices,
+        sentiment,
+        correlation,
+        items,
+        words,
+        btcStats,
+        sources
+    ] = await Promise.all([
         fetch(`${API}/prices`).then(r => r.json()),
         fetch(`${API}/sentiment`).then(r => r.json()),
         fetch(`${API}/correlation`).then(r => r.json()),
         fetch(`${API}/items`).then(r => r.json()),
+        fetch(`${API}/words`).then(r => r.json()),
+        fetch(`${API}/btc_stats`).then(r => r.json()),
+        fetch(`${API}/top_sources`).then(r => r.json())
     ]);
+        
 
+    // Obtener los datos más recientes (posición 0 ya que vienen por DESC)
     const btc = prices.find(p => p.coin === "bitcoin");
     const eth = prices.find(p => p.coin === "ethereum");
     const last = sentiment[0];
 
-    document.getElementById("btc-price").textContent = `$${btc.price_usd.toLocaleString()}`;
-    const btcChangeEl = document.getElementById("btc-change");
-    btcChangeEl.textContent = `${btc.change_24h >= 0 ? "+" : ""}${btc.change_24h.toFixed(2)}% en 24h`;
-    btcChangeEl.className = `metric-sub ${btc.change_24h >= 0 ? "up" : "down"}`;
+    if (btc) {
+        document.getElementById("btc-price").textContent = `$${btc.price_usd.toLocaleString()}`;
+        const btcChangeEl = document.getElementById("btc-change");
+        btcChangeEl.textContent = `${btc.change_24h >= 0 ? "+" : ""}${btc.change_24h.toFixed(2)}% en 24h`;
+        btcChangeEl.className = `metric-sub ${btc.change_24h >= 0 ? "up" : "down"}`;
+    }
 
-    document.getElementById("eth-price").textContent = `$${eth.price_usd.toLocaleString()}`;
-    const ethChangeEl = document.getElementById("eth-change");
-    ethChangeEl.textContent = `${eth.change_24h >= 0 ? "+" : ""}${eth.change_24h.toFixed(2)}% en 24h`;
-    ethChangeEl.className = `metric-sub ${eth.change_24h >= 0 ? "up" : "down"}`;
+    if (eth) {
+        document.getElementById("eth-price").textContent = `$${eth.price_usd.toLocaleString()}`;
+        const ethChangeEl = document.getElementById("eth-change");
+        ethChangeEl.textContent = `${eth.change_24h >= 0 ? "+" : ""}${eth.change_24h.toFixed(2)}% en 24h`;
+        ethChangeEl.className = `metric-sub ${eth.change_24h >= 0 ? "up" : "down"}`;
+    }
 
-    const sentEl = document.getElementById("sentiment-value");
-    sentEl.textContent = last.average_sentiment.toFixed(4);
-    const cls = last.label === "positive" ? "up" : last.label === "negative" ? "down" : "neutral-color";
-    sentEl.className = `metric-value ${cls}`;
-    document.getElementById("sentiment-label").textContent = last.label;
-    document.getElementById("total-analyzed").textContent = last.total_analyzed;
+    if (last) {
+        const sentEl = document.getElementById("sentiment-value");
+        sentEl.textContent = last.average_sentiment.toFixed(4);
+        const cls = last.label === "positive" ? "up" : last.label === "negative" ? "down" : "neutral-color";
+        sentEl.className = `metric-value ${cls}`;
+        document.getElementById("sentiment-label").textContent = last.label;
+        document.getElementById("total-analyzed").textContent = last.total_analyzed;
+        document.getElementById("btc-max").textContent =
+            "$" + btcStats.max.toLocaleString();
 
-    const btcPrices = prices.filter(p => p.coin === "bitcoin").reverse();
+        document.getElementById("btc-min").textContent =
+            "$" + btcStats.min.toLocaleString();
+
+        document.getElementById("btc-avg").textContent =
+            "$" + Number(btcStats.avg).toFixed(0);
+
+        if (sources.length > 0) {
+            document.getElementById("best-source").textContent =
+                sources[0].source;
+        }
+    }
+
+    // Clonar para evitar mutar el array original al aplicar .reverse()
+    const btcPrices = [...prices].filter(p => p.coin === "bitcoin").reverse();
     new Chart(document.getElementById("btcChart"), {
         type: "line",
         data: {
@@ -369,7 +475,7 @@ async function loadDashboard() {
         options: { ...chartDefaults, scales: { ...chartDefaults.scales, y: { ...chartDefaults.scales.y, min: -1, max: 1 } } }
     });
 
-    const btcCorr = correlation.filter(c => c.coin === "bitcoin");
+    const btcCorr = [...correlation].filter(c => c.coin === "bitcoin");
     new Chart(document.getElementById("correlationChart"), {
         type: "line",
         data: {
@@ -405,10 +511,20 @@ async function loadDashboard() {
         }
     });
 
+    // Renderizado eficiente del bloque de palabras
+    const wordsContainer = document.getElementById("words-cloud");
+    let wordsHTML = "";
+    words.forEach(w => {
+        wordsHTML += `<div class="word-badge">${w.word} <span>#${w.count}</span></div>`;
+    });
+    wordsContainer.innerHTML = wordsHTML || "Sin tópicos suficientes.";
+
+    // Renderizado eficiente de tabla
     const tbody = document.getElementById("items-table");
+    let tableHTML = "";
     items.forEach(item => {
         const scoreClass = item.compound > 0.05 ? "up" : item.compound < -0.05 ? "down" : "neutral-color";
-        tbody.innerHTML += `
+        tableHTML += `
             <tr>
                 <td class="source-name">${item.source}</td>
                 <td class="title-text">${item.title}</td>
@@ -417,6 +533,7 @@ async function loadDashboard() {
             </tr>
         `;
     });
+    tbody.innerHTML = tableHTML;
 }
 
 loadDashboard();

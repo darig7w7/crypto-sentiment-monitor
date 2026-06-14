@@ -1,153 +1,61 @@
-# Crypto Sentiment Monitor
+# Crypto Sentiment Pipeline
 
-Pipeline de datos que recopila precios de criptomonedas y analiza el sentimiento
-de noticias y publicaciones en tiempo real, correlacionando ambas señales cada hora.
+Data Engineering lab project (Proyecto 8) using Docker, Airflow, CoinGecko, NewsAPI, Hacker News, VADER sentiment analysis, and PostgreSQL.
 
-## Hipótesis
+The pipeline combines prices and text from three sources to compute sentiment scores and correlate them with price movement:
 
-El sentimiento promedio de noticias y publicaciones sobre criptomonedas
-está correlacionado con el movimiento del precio en la siguiente hora.
-Si el mercado reacciona a la narrativa mediática, debería existir una
-correlación positiva entre un sentimiento alto y una subida de precio,
-y viceversa. Este pipeline permite observar esa relación con datos reales.
-
-## Arquitectura
-CoinGecko API ──────────────────────────────────┐
-
-▼
-
-NewsAPI ──────── filtro cripto ──── VADER ──── PostgreSQL ──── Flask API ──── Dashboard
-
-▲
-
-HackerNews ──────────────────────────────────────┘
-
-Orquestado con Apache Airflow. Cada hora el DAG `crypto_sentiment` ejecuta
-las tres extracciones en paralelo, analiza el sentimiento y persiste los resultados.
-
-## Conceptos clave
-
-### ¿Qué es un pipeline ETL?
-
-ETL significa Extract, Transform, Load. Es el patrón base de ingeniería de datos:
-
-- **Extract** — obtener datos crudos de fuentes externas (APIs, bases de datos, archivos)
-- **Transform** — limpiar, filtrar y procesar esos datos para que sean útiles
-- **Load** — persistir el resultado en un almacén de datos para análisis posterior
-
-En este proyecto cada fase tiene una responsabilidad clara:
-
-| Fase | Tasks |
-|---|---|
-| Extract | `fetch_prices`, `fetch_news`, `fetch_hackernews` |
-| Transform | `analyze_sentiment` |
-| Load | `save_to_postgres` |
-
-### ¿Qué es Apache Airflow?
-
-Airflow es un orquestador de pipelines de datos. Su función es decidir cuándo
-correr cada tarea, en qué orden, con qué dependencias, y qué hacer si algo falla.
-
-Sin Airflow, un script Python que llama APIs tiene varios problemas:
-- No se ejecuta solo cada hora
-- Si una API falla, todo el proceso se pierde
-- No hay visibilidad de qué corrió bien y qué no
-
-Airflow resuelve los tres con reintentos automáticos, scheduling y una
-interfaz web para monitorear cada ejecución.
-
-### ¿Qué es un DAG?
-
-DAG significa Directed Acyclic Graph — grafo dirigido acíclico. En Airflow
-cada pipeline se define como un DAG: un archivo Python que describe las tareas
-y sus dependencias. "Acíclico" significa que no hay ciclos — las tareas solo
-avanzan, nunca vuelven atrás.
-
-Las dependencias permiten paralelismo. En este DAG las tres extracciones
-no dependen entre sí, por lo que Airflow las corre simultáneamente:
-
-fetch_prices ─────────────────────────┐
-
-▼
-
-fetch_news ──── analyze_sentiment ──── save_to_postgres
-
-▲
-
-fetch_hackernews ─────────────────────┘
-
-Esto reduce el tiempo total de ejecución de ~18 segundos a ~6 segundos.
-
-### ¿Qué es VADER?
-
-VADER (Valence Aware Dictionary and sEntiment Reasoner) es un modelo de
-análisis de sentimiento diseñado específicamente para texto de internet.
-A diferencia de modelos de machine learning que requieren entrenamiento,
-VADER usa un diccionario de palabras con pesos predefinidos.
-
-El resultado principal es el score `compound`, un valor entre -1 y +1:
-
-| Rango | Interpretación |
-|---|---|
-| > 0.05 | Positivo |
-| -0.05 a 0.05 | Neutral |
-| < -0.05 | Negativo |
-
-VADER funciona bien con titulares de noticias porque está calibrado para
-texto corto, informal y con carga emocional.
-
-### ¿Por qué filtrar las noticias?
-
-NewsAPI devuelve artículos de fuentes como Crypto Briefing que mezclan
-contenido cripto con noticias generales. Sin filtro, titulares del Mundial
-o de política contaminan el análisis de sentimiento. El filtro verifica
-que cada artículo contenga al menos una keyword del dominio cripto
-antes de incluirlo en el análisis.
-
-## Tecnologías
-
-| Capa | Tecnología |
-|---|---|
-| Orquestación | Apache Airflow 2.10 |
-| Análisis de sentimiento | VADER (vaderSentiment) |
-| Base de datos | PostgreSQL 16 |
-| Backend | Flask 3.1 |
-| Infraestructura | Docker + Docker Compose |
-
-## Fuentes de datos
-
-- **CoinGecko** — precios y variación 24h de Bitcoin y Ethereum (sin API key)
-- **NewsAPI** — artículos de medios especializados filtrados por keywords cripto
-- **HackerNews** — posts de la comunidad tech vía Algolia API (sin API key)
-
-## Requisitos
-
-- Docker y Docker Compose
-- Python 3.10+
-- API key de NewsAPI (gratuita en newsapi.org)
-
-## Instalación
-
-### 1. Clonar el repositorio
-
-```bash
-git clone <url-del-repo>
-cd data_engineering_course_lab4
+```text
+CoinGecko API ───────> transform_crypto ──────┐
+                                              │
+NewsAPI (Reddit alt.) ──> transform_news ─────┼──> combine_data ──> load_postgres
+                                              │
+Hacker News API ────────> transform_news ─────┘
 ```
 
-### 2. Configurar variables de entorno
+## Folders
+
+```text
+airflow/
+```
+
+Airflow environment with the DAG `crypto_sentiment_pipeline`. Runs every 15 minutes, extracts prices and text, computes sentiment scores, and loads results into PostgreSQL.
+
+```text
+dashboard/
+```
+
+Flask API and HTML dashboard that reads from PostgreSQL and visualizes prices, sentiment over time, keyword frequency, and price movement correlation.
+
+```text
+project-idea.md
+project-idea.es.md
+```
+
+Project idea document in English and Spanish.
+
+## Requirements
+
+- Docker / Docker Compose
+- Python 3.10+
+- NewsAPI key (free at newsapi.org)
+
+## Design Decision: NewsAPI instead of Reddit
+
+Reddit's API rejects credentials for new accounts since 2023. NewsAPI provides articles from specialized crypto media such as CoinDesk and Cointelegraph. The `extract_reddit` task is preserved in the DAG to match the project architecture, with a documented note explaining the substitution.
+
+## 1. Configure environment
 
 ```bash
 cp tmdb-movie-metadata/.env.example tmdb-movie-metadata/.env
 ```
 
-Editar `airflow/docker-compose.yml` y reemplazar la NEWS_API_KEY:
+Edit `tmdb-movie-metadata/.env` and add your NewsAPI key:
 
-```yaml
-NEWS_API_KEY: ${NEWS_API_KEY:-tu_key_aqui}
+```env
+NEWS_API_KEY=your_newsapi_key_here
 ```
 
-### 3. Levantar Airflow
+## 2. Start Airflow
 
 ```bash
 cd airflow
@@ -155,12 +63,21 @@ sudo chown -R 50000:0 logs/
 docker compose up -d
 ```
 
-El webserver estará disponible en el puerto `8081` (no 8080).
-Airflow tarda 2-3 minutos en iniciar completamente.
+Open Airflow:
 
-Usuario: `admin` / Contraseña: `admin`
+```text
+http://localhost:8081
+```
 
-### 4. Crear las tablas en PostgreSQL
+Login:
+
+```text
+admin / admin
+```
+
+Note: Airflow takes 2–3 minutes to initialize on first run. The webserver runs on port `8081`, not `8080`.
+
+## 3. Create PostgreSQL tables
 
 ```bash
 docker exec -it airflow-postgres-1 psql -U airflow -d airflow
@@ -187,21 +104,58 @@ CREATE TABLE sentiment_items (
     id SERIAL PRIMARY KEY,
     fetched_at TIMESTAMP,
     source VARCHAR(100),
-    title TEXT,
+    title TEXT UNIQUE,
     compound NUMERIC,
     type VARCHAR(20)
 );
 ```
 
-### 5. Activar el DAG
+## 4. Run the DAG
 
-En la interfaz de Airflow activar `crypto_sentiment` y ejecutarlo manualmente
-con el botón Trigger DAG. A partir de ese momento corre automáticamente cada hora.
+In the Airflow UI:
 
-### 6. Levantar el dashboard
+1. Open `crypto_sentiment_pipeline`
+2. Unpause the DAG
+3. Trigger it manually
+4. Check task logs
+
+Task flow:
+
+```text
+extract_crypto ─────────────────────────────────────────┐
+extract_reddit ─────────────────────────────────────────┤
+extract_news ───┐                                       │
+                ├──> transform_news ──> combine_data ───┼──> load_postgres
+extract_hackernews ─┘                                   │
+                                        transform_crypto─┘
+```
+
+Pipeline steps:
+
+1. Extract crypto prices
+2. Extract Reddit discussions (preserved, fulfilled by NewsAPI)
+3. Extract Hacker News posts
+4. Transform datasets
+5. Compute sentiment scores
+6. Combine datasets
+7. Load into PostgreSQL
+
+The DAG runs automatically every 15 minutes after the first trigger.
+
+The final payload is printed in the `load_postgres` task logs:
+
+```json
+{
+  "fetched_at": "2026-06-14 02:00:07",
+  "bitcoin_price": 64600,
+  "average_sentiment": 0.1541,
+  "total_analyzed": 15
+}
+```
+
+## 5. Start the dashboard
 
 ```bash
-# Si no tienes python3-venv instalado
 sudo apt install python3-venv python3-full -y
 
 cd dashboard
@@ -211,45 +165,55 @@ pip install flask flask-cors psycopg2-binary
 python app.py
 ```
 
-Dashboard disponible en `http://127.0.0.1:5000`
+Dashboard available at:
 
-## Estructura del proyecto
+```text
+http://127.0.0.1:5000
+```
 
-data_engineering_course_lab4/
+## Business Questions
 
-├── airflow/
+**What discussions happen before price increases?**
 
-│   ├── dags/
+```sql
+SELECT
+    cp1.fetched_at,
+    cp1.price_usd AS precio_actual,
+    cp2.price_usd - cp1.price_usd AS variacion,
+    cs.average_sentiment,
+    cs.label
+FROM crypto_prices cp1
+JOIN crypto_prices cp2
+    ON cp1.coin = cp2.coin
+    AND cp2.fetched_at = (
+        SELECT MIN(fetched_at) FROM crypto_prices
+        WHERE fetched_at > cp1.fetched_at AND coin = cp1.coin
+    )
+JOIN crypto_sentiment cs
+    ON DATE_TRUNC('minute', cs.fetched_at) = DATE_TRUNC('minute', cp1.fetched_at)
+WHERE cp1.coin = 'bitcoin'
+ORDER BY cp1.fetched_at ASC;
+```
 
-│   │   └── crypto_sentiment.py   # DAG principal
+**What words appear most frequently?**
 
-│   └── docker-compose.yml
+```sql
+SELECT word, COUNT(*) AS frecuencia
+FROM (
+    SELECT regexp_split_to_table(lower(title), '\s+') AS word
+    FROM sentiment_items
+) words
+WHERE length(word) > 4
+AND word NOT IN (
+    'with','that','this','from','have','been','will','their',
+    'about','would','could','after','bitcoin','ethereum','crypto'
+)
+GROUP BY word
+ORDER BY frecuencia DESC
+LIMIT 20;
+```
 
-└── dashboard/
-
-├── app.py                    # API Flask
-
-└── index.html                # Dashboard
-
-## Esquema de base de datos
-
-crypto_prices          crypto_sentiment       sentiment_items
-
-─────────────          ────────────────       ───────────────
-
-id                     id                     id
-
-fetched_at             fetched_at             fetched_at
-
-coin                   average_sentiment      source
-
-price_usd              label                  title
-
-change_24h             total_analyzed         compound
-
-type
-
-## Consulta de correlación
+**Does sentiment correlate with price movement?**
 
 ```sql
 SELECT
@@ -263,4 +227,43 @@ FROM crypto_sentiment cs
 JOIN crypto_prices cp
     ON DATE_TRUNC('minute', cs.fetched_at) = DATE_TRUNC('minute', cp.fetched_at)
 ORDER BY cs.fetched_at ASC;
+```
+
+## Stop Everything
+
+```bash
+cd airflow
+docker compose down
+```
+
+## Troubleshooting
+
+If Airflow is not visible on `8081`:
+
+```bash
+cd airflow
+docker compose ps
+docker compose logs --tail=50 airflow-webserver
+```
+
+If the webserver fails with permission errors on logs:
+
+```bash
+cd airflow
+sudo chown -R 50000:0 logs/
+docker compose down -v
+docker compose up -d
+```
+
+If PostgreSQL is not reachable from the dashboard, confirm the port is exposed:
+
+```bash
+docker compose ps
+# postgres should show 0.0.0.0:5432->5432/tcp
+```
+
+If the DAG shows import errors, confirm `vaderSentiment` is listed in `_PIP_ADDITIONAL_REQUIREMENTS` inside `docker-compose.yml`:
+
+```yaml
+_PIP_ADDITIONAL_REQUIREMENTS: requests==2.31.0 psycopg2-binary==2.9.9 vaderSentiment==3.3.2
 ```
