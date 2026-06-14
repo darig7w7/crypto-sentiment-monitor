@@ -5884,3 +5884,231 @@ File Path                                          PID    Runtime      # DAGs   
 /opt/airflow/dags/crypto_sentiment.py                                       1           0  0.12s           2026-06-14T06:10:53                      12
 /opt/airflow/dags/movie_quote_notifier_example.py                           1           0  0.11s           2026-06-14T06:10:45                      12
 ================================================================================
+[2026-06-14T06:11:31.326+0000] {manager.py:997} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                          PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run               Last # of DB Queries
+-------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------  ----------------------
+/opt/airflow/dags/movie_quote_notifier_example.py                           1           0  0.38s           2026-06-14T06:11:15                      12
+/opt/airflow/dags/crypto_sentiment.py                                       0           1  0.10s           2026-06-14T06:11:19                       3
+================================================================================
+[2026-06-14T06:12:01.632+0000] {manager.py:997} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                          PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run               Last # of DB Queries
+-------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------  ----------------------
+/opt/airflow/dags/crypto_sentiment.py                                       1           0  0.13s           2026-06-14T06:11:38                      12
+/opt/airflow/dags/movie_quote_notifier_example.py                           1           0  0.11s           2026-06-14T06:11:46                      12
+================================================================================
+[2026-06-14T06:12:32.006+0000] {manager.py:997} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                          PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run               Last # of DB Queries
+-------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------  ----------------------
+/opt/airflow/dags/crypto_sentiment.py                                       1           0  0.18s           2026-06-14T06:12:08                      12
+/opt/airflow/dags/movie_quote_notifier_example.py                           1           0  0.15s           2026-06-14T06:12:16                      12
+================================================================================
+[2026-06-14T06:12:35.022+0000] {manager.py:821} INFO - Searching for files in /opt/airflow/dags
+[2026-06-14T06:12:35.024+0000] {manager.py:824} INFO - There are 2 files in /opt/airflow/dags
+[2026-06-14T06:13:02.322+0000] {manager.py:997} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                          PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run               Last # of DB Queries
+-------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------  ----------------------
+/opt/airflow/dags/movie_quote_notifier_example.py                           1           0  0.14s           2026-06-14T06:12:47                      12
+/opt/airflow/dags/crypto_sentiment.py                                       1           0  0.12s           2026-06-14T06:12:39                      12
+================================================================================
+[2026-06-14T06:13:32.675+0000] {manager.py:997} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                          PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run               Last # of DB Queries
+-------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------  ----------------------
+/opt/airflow/dags/movie_quote_notifier_example.py                           1           0  0.21s           2026-06-14T06:13:17                      12
+/opt/airflow/dags/crypto_sentiment.py                                       1           0  0.16s           2026-06-14T06:13:09                      12
+================================================================================
+[2026-06-14T06:14:03.007+0000] {manager.py:997} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                          PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run               Last # of DB Queries
+-------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------  ----------------------
+/opt/airflow/dags/movie_quote_notifier_example.py                           1           0  0.33s           2026-06-14T06:13:48                      12
+/opt/airflow/dags/crypto_sentiment.py                                       1           0  0.14s           2026-06-14T06:13:39                      12
+================================================================================
+[2026-06-14T06:14:33.359+0000] {manager.py:997} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                          PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run               Last # of DB Queries
+-------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------  ----------------------
+/opt/airflow/dags/crypto_sentiment.py                                       1           0  0.16s           2026-06-14T06:14:10                      12
+/opt/airflow/dags/movie_quote_notifier_example.py                           1           0  0.16s           2026-06-14T06:14:18                      12
+================================================================================
+[2026-06-14T06:15:03.539+0000] {manager.py:997} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                          PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run               Last # of DB Queries
+-------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------  ----------------------
+/opt/airflow/dags/crypto_sentiment.py                                       1           0  0.12s           2026-06-14T06:14:40                      12
+/opt/airflow/dags/movie_quote_notifier_example.py                           1           0  0.11s           2026-06-14T06:14:48                      12
+================================================================================
+[2026-06-14T06:15:33.889+0000] {manager.py:997} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                          PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run               Last # of DB Queries
+-------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------  ----------------------
+/opt/airflow/dags/crypto_sentiment.py                                       1           0  0.16s           2026-06-14T06:15:10                      12
+/opt/airflow/dags/movie_quote_notifier_example.py                           1           0  0.12s           2026-06-14T06:15:18                      12
+================================================================================
+[2026-06-14T06:16:04.190+0000] {manager.py:997} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                          PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run               Last # of DB Queries
+-------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------  ----------------------
+/opt/airflow/dags/crypto_sentiment.py                                       1           0  0.12s           2026-06-14T06:15:41                      12
+/opt/airflow/dags/movie_quote_notifier_example.py                           1           0  0.11s           2026-06-14T06:15:49                      12
+================================================================================
+[2026-06-14T06:16:34.484+0000] {manager.py:997} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                          PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run               Last # of DB Queries
+-------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------  ----------------------
+/opt/airflow/dags/movie_quote_notifier_example.py                           1           0  0.13s           2026-06-14T06:16:19                      12
+/opt/airflow/dags/crypto_sentiment.py                                       1           0  0.12s           2026-06-14T06:16:11                      12
+================================================================================
+[2026-06-14T06:17:04.792+0000] {manager.py:997} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                          PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run               Last # of DB Queries
+-------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------  ----------------------
+/opt/airflow/dags/crypto_sentiment.py                                       1           0  0.13s           2026-06-14T06:16:41                      12
+/opt/airflow/dags/movie_quote_notifier_example.py                           1           0  0.12s           2026-06-14T06:16:49                      12
+================================================================================
+[2026-06-14T06:17:34.990+0000] {manager.py:997} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                          PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run               Last # of DB Queries
+-------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------  ----------------------
+/opt/airflow/dags/crypto_sentiment.py                                       1           0  0.12s           2026-06-14T06:17:11                      12
+/opt/airflow/dags/movie_quote_notifier_example.py                           1           0  0.11s           2026-06-14T06:17:20                      12
+================================================================================
+[2026-06-14T06:17:35.078+0000] {manager.py:821} INFO - Searching for files in /opt/airflow/dags
+[2026-06-14T06:17:35.296+0000] {manager.py:824} INFO - There are 2 files in /opt/airflow/dags
+[2026-06-14T06:18:05.280+0000] {manager.py:997} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                          PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run               Last # of DB Queries
+-------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------  ----------------------
+/opt/airflow/dags/crypto_sentiment.py                                       1           0  0.12s           2026-06-14T06:17:42                      12
+/opt/airflow/dags/movie_quote_notifier_example.py                           1           0  0.12s           2026-06-14T06:17:50                      12
+================================================================================
+[2026-06-14T06:18:35.489+0000] {manager.py:997} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                          PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run               Last # of DB Queries
+-------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------  ----------------------
+/opt/airflow/dags/crypto_sentiment.py                                       1           0  0.15s           2026-06-14T06:18:12                      12
+/opt/airflow/dags/movie_quote_notifier_example.py                           1           0  0.11s           2026-06-14T06:18:20                      12
+================================================================================
+[2026-06-14T06:19:05.870+0000] {manager.py:997} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                          PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run               Last # of DB Queries
+-------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------  ----------------------
+/opt/airflow/dags/crypto_sentiment.py                                       1           0  0.20s           2026-06-14T06:18:42                      12
+/opt/airflow/dags/movie_quote_notifier_example.py                           1           0  0.13s           2026-06-14T06:18:50                      12
+================================================================================
+[2026-06-14T06:19:36.157+0000] {manager.py:997} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                          PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run               Last # of DB Queries
+-------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------  ----------------------
+/opt/airflow/dags/crypto_sentiment.py                                       1           0  0.11s           2026-06-14T06:19:13                      12
+/opt/airflow/dags/movie_quote_notifier_example.py                           1           0  0.11s           2026-06-14T06:19:21                      12
+================================================================================
+[2026-06-14T06:20:06.370+0000] {manager.py:997} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                          PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run               Last # of DB Queries
+-------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------  ----------------------
+/opt/airflow/dags/crypto_sentiment.py                                       1           0  0.16s           2026-06-14T06:19:43                      12
+/opt/airflow/dags/movie_quote_notifier_example.py                           1           0  0.11s           2026-06-14T06:19:51                      12
+================================================================================
+[2026-06-14T06:20:36.702+0000] {manager.py:997} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                          PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run               Last # of DB Queries
+-------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------  ----------------------
+/opt/airflow/dags/movie_quote_notifier_example.py                           1           0  0.20s           2026-06-14T06:20:21                      12
+/opt/airflow/dags/crypto_sentiment.py                                       1           0  0.15s           2026-06-14T06:20:13                      12
+================================================================================
+[2026-06-14T06:20:52.046+0000] {manager.py:465} INFO - Exiting gracefully upon receiving signal 15
+[2026-06-14T06:20:52.046+0000] {manager.py:465} INFO - Exiting gracefully upon receiving signal 15
+[2026-06-14T06:20:54.357+0000] {manager.py:465} INFO - Exiting gracefully upon receiving signal 15
+[2026-06-14T06:22:08.819+0000] {manager.py:483} INFO - Processing files using up to 2 processes at a time 
+[2026-06-14T06:22:08.820+0000] {manager.py:484} INFO - Process each file at most once every 30 seconds
+[2026-06-14T06:22:08.821+0000] {manager.py:485} INFO - Checking for new files in /opt/airflow/dags every 300 seconds
+[2026-06-14T06:22:08.821+0000] {manager.py:821} INFO - Searching for files in /opt/airflow/dags
+[2026-06-14T06:22:08.824+0000] {manager.py:824} INFO - There are 2 files in /opt/airflow/dags
+[2026-06-14T06:22:09.049+0000] {manager.py:997} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                            PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run      Last # of DB Queries
+-------------------------------------------------  -----  ---------  --------  ----------  --------------  ----------  ----------------------
+/opt/airflow/dags/movie_quote_notifier_example.py    208  0.04s             0           0                                                   0
+/opt/airflow/dags/crypto_sentiment.py                205  0.07s             0           0                                                   0
+================================================================================
+[2026-06-14T06:22:39.483+0000] {manager.py:997} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                            PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run               Last # of DB Queries
+-------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------  ----------------------
+/opt/airflow/dags/crypto_sentiment.py                216  0.01s             1           0  0.30s           2026-06-14T06:22:09                      12
+/opt/airflow/dags/movie_quote_notifier_example.py    217  0.00s             1           0  0.27s           2026-06-14T06:22:09                      12
+================================================================================
+[2026-06-14T06:23:09.915+0000] {manager.py:997} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                            PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run               Last # of DB Queries
+-------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------  ----------------------
+/opt/airflow/dags/crypto_sentiment.py                233  0.02s             1           0  0.35s           2026-06-14T06:22:39                      12
+/opt/airflow/dags/movie_quote_notifier_example.py    236  0.01s             1           0  0.24s           2026-06-14T06:22:39                      12
+================================================================================
+[2026-06-14T06:23:40.345+0000] {manager.py:997} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                            PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run               Last # of DB Queries
+-------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------  ----------------------
+/opt/airflow/dags/crypto_sentiment.py                251  0.02s             1           0  0.23s           2026-06-14T06:23:10                      12
+/opt/airflow/dags/movie_quote_notifier_example.py    254  0.01s             1           0  0.23s           2026-06-14T06:23:10                      12
+================================================================================
+[2026-06-14T06:24:10.538+0000] {manager.py:997} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                          PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run               Last # of DB Queries
+-------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------  ----------------------
+/opt/airflow/dags/crypto_sentiment.py                                       1           0  0.23s           2026-06-14T06:23:40                      12
+/opt/airflow/dags/movie_quote_notifier_example.py                           1           0  0.21s           2026-06-14T06:23:40                      12
+================================================================================

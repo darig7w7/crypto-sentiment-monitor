@@ -13,4 +13,5 @@ __pycache__/
 *.pyo
 
 # Docker volumes
-postgres-db-volume/
+postgres-db-volume/airflow/.env
+airflow/.env
