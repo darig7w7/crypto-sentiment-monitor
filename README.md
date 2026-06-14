@@ -264,3 +264,18 @@ JOIN crypto_prices cp
     ON DATE_TRUNC('minute', cs.fetched_at) = DATE_TRUNC('minute', cp.fetched_at)
 ORDER BY cs.fetched_at ASC;
 ```
+
+## Decisiones de diseño
+
+### Por qué no se usó Reddit
+
+Reddit fue considerado como fuente inicial dado el volumen de discusión
+sobre criptomonedas en subreddits como r/CryptoCurrency. Sin embargo,
+desde 2023 Reddit restringe el acceso a su API a cuentas verificadas
+con historial de actividad, rechazando aplicaciones de cuentas nuevas.
+
+Como alternativa se optó por HackerNews, cuya API es pública, estable
+y sin restricciones. La comunidad de HackerNews produce contenido más
+analítico sobre cripto que Reddit, lo que mejora la calidad del
+análisis de sentimiento con VADER, un modelo calibrado para texto
+técnico e informativo más que para lenguaje emocional o de jerga.
